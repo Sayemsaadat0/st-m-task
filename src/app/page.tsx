@@ -1,129 +1,75 @@
-"use client";
-
-import { useState } from 'react';
-import DashboardTable, {
-  type DashboardTableColumn,
-} from "@/components/shared/DashboardTable";
-
-type DashboardDataType = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  createdAt: string;
-};
+"use client"
+import React from 'react'
+import SummaryCards from './_components/SummaryCards';
+import DashboardChart from './_components/DashboardChart';
+import LeaderboardTable from './_components/LeaderboardTable';
+import { useGetSummary } from './_components/hooks/dashboard.hooks';
+import Image from 'next/image';
 
 const Dashboard = () => {
-  const [isLoading] = useState(false);
+  const { data, isLoading, error } = useGetSummary();
 
-  // Fake data
-  const fakeData: DashboardDataType[] = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      role: "Admin",
-      status: "Active",
-      createdAt: "2024-01-15T10:30:00Z",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      role: "User",
-      status: "Active",
-      createdAt: "2024-01-20T14:45:00Z",
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      email: "bob.johnson@example.com",
-      role: "Moderator",
-      status: "Inactive",
-      createdAt: "2024-02-01T09:15:00Z",
-    },
-    {
-      id: 4,
-      name: "Alice Williams",
-      email: "alice.williams@example.com",
-      role: "User",
-      status: "Active",
-      createdAt: "2024-02-10T16:20:00Z",
-    },
-    {
-      id: 5,
-      name: "Charlie Brown",
-      email: "charlie.brown@example.com",
-      role: "User",
-      status: "Active",
-      createdAt: "2024-02-15T11:00:00Z",
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Image
+          className="w-auto h-12 animate-pulse"
+          src="/assets/logo22.png"
+          alt="logo"
+          width={600}
+          height={600}
+          priority
+          unoptimized
+        />
+      </div>
+    );
+  }
 
-  const formatDatestamp = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-red-400 text-sm sm:text-base md:text-lg">Failed to load dashboard data</div>
+      </div>
+    );
+  }
 
-  const DashboardColumns: DashboardTableColumn[] = [
-    {
-      title: "Name",
-      dataKey: "name",
-      row: (data: DashboardDataType) => (
-        <p className="text-black">{data?.name}</p>
-      ),
-    },
-    {
-      title: "Email",
-      dataKey: "email",
-      row: (data: DashboardDataType) => (
-        <p className="text-black">{data?.email}</p>
-      ),
-    },
-    {
-      title: "Role",
-      dataKey: "role",
-      row: (data: DashboardDataType) => (
-        <p className="text-black">{data?.role}</p>
-      ),
-    },
-    {
-      title: "Status",
-      dataKey: "status",
-      row: (data: DashboardDataType) => (
-        <p className="text-black">{data?.status}</p>
-      ),
-    },
-    {
-      title: "Created At",
-      dataKey: "createdAt",
-      row: (data: DashboardDataType) => (
-        <p className="text-black">
-          {data?.createdAt ? formatDatestamp(data.createdAt) : "-"}
-        </p>
-      ),
-    },
-  ];
+  if (!data?.result) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-white/60 text-sm sm:text-base md:text-lg">No data available</div>
+      </div>
+    );
+  }
+
+  const { result } = data;
 
   return (
-    <div className="p-5">
-      <h1 className="text-2xl font-semibold text-t-black mb-4">
-        Dashboard
-        {fakeData.length ? ` (${fakeData.length})` : ""}
-      </h1>
+    <div className="p-3 sm:p-4 md:p-6 min-h-screen pb-20">
+      <div className="">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-t-gray/70 mb-4 sm:mb-6">Dashboard</h1>
 
-      <DashboardTable
-        columns={DashboardColumns}
-        isLoading={isLoading}
-        data={fakeData}
-      />
+        {/* Summary Cards */}
+        <SummaryCards
+          totals={result.totals}
+          student_status={result.student_status}
+        />
+
+        {/* Charts and Tables Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Course Enrollments Chart */}
+          <DashboardChart
+            data={result.most_popular_courses.map(course => ({
+              course_name: course.course_name,
+              enrollment_count: course.enrollment_count,
+            }))}
+          />
+
+          {/* Top Students Leaderboard */}
+          <LeaderboardTable students={result.top_students} />
+        </div>
+      </div>
     </div>
   );
-};
+}
 
-export default Dashboard;
+export default Dashboard

@@ -61,14 +61,14 @@ export const AdminSidebarItem: React.FC<SidebarItemProps> = ({
     const itemContent = (
         <div
             className={cn(
-                "flex gap-1 py-2  px-2 as items-center hover:bg-t-green hover:text-t-black text-t-gray rounded-md",
+                "flex gap-1 p-2 items-center hover:bg-t-green hover:text-t-black text-t-gray ",
                 isActive && "bg-t-green text-t-black  ",
                 !isActive && "text-gray-400",
                 level > 0 && "",
                 isCollapsed && !isMobile && "justify-center flex-col text-xs"
             )}
         >
-            <span>{route.icon && <route.icon size={route.iconSize || "20"} />}</span>
+            <span>{route.icon && <route.icon size={route.iconSize as any || "16"} />}</span>
             {(!isCollapsed || isMobile) && (
                 <span className="px-2">{route.title}</span>
             )}
@@ -207,7 +207,7 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
         <div
             className={cn(
                 "hidden md:flex h-full  bg-t-black flex-col border-r border-t-gray/30 transition-all duration-300",
-                isCollapsed ? "w-16" : "w-48"
+                isCollapsed ? "w-16" : "w-56"
             )}
         >
             <AdminSidebarContent

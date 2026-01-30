@@ -2,63 +2,40 @@
 
 import React, { useState } from "react";
 import DashboardTable, { type DashboardTableColumn } from "@/components/shared/DashboardTable";
-import { useGetStudents, useDeleteStudent, type StudentType } from "../_components/hooks/students.hooks";
+import { useGetFacultyMembers, useDeleteFacultyMember, type FacultyMemberType } from "../_components/hooks/facultyMembers.hooks";
 import { Eye, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import DeleteAction from "@/components/shared/DeleteAction";
 
-export default function Students() {
+export default function FacultyMembers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [search, setSearch] = useState("");
 
-  const { data, isLoading } = useGetStudents(currentPage, perPage, search);
-  const deleteStudent = useDeleteStudent();
+  const { data, isLoading } = useGetFacultyMembers(currentPage, perPage, search);
+  const deleteFacultyMember = useDeleteFacultyMember();
 
   const columns: DashboardTableColumn[] = [
     {
       title: "Name",
       dataKey: "name",
-      row: (data: StudentType) => (
-        <span className="text-xs sm:text-sm md:text-base">
-          {data.first_name} {data.last_name}
-        </span>
-      ),
+      row: (data: FacultyMemberType) => <span className="text-xs sm:text-sm md:text-base">{data.name}</span>,
     },
     {
-      title: "Email",
-      dataKey: "email",
-      row: (data: StudentType) => <span className="text-xs sm:text-sm md:text-base">{data.email}</span>,
-    },
-    {
-      title: "Phone",
-      dataKey: "phone",
-      row: (data: StudentType) => <span className="text-xs sm:text-sm md:text-base">{data.phone}</span>,
-    },
-    {
-      title: "CGPA",
-      dataKey: "cgpa_point",
-      row: (data: StudentType) => (
-        <span className="text-xs sm:text-sm md:text-base text-t-green font-semibold">{data.cgpa_point.toFixed(2)}</span>
-      ),
-    },
-    {
-      title: "Status",
-      dataKey: "status",
-      row: (data: StudentType) => (
-        <span className={`text-xs sm:text-sm md:text-base uppercase ${data.status === "passed" ? "text-t-green" : "text-orange-400"}`}>
-          {data.status || "ongoing"}
-        </span>
-      ),
+      title: "Faculty",
+      dataKey: "faculty_id",
+      row: (data: FacultyMemberType) => {
+        const faculty = typeof data.faculty_id === "object" ? data.faculty_id : null;
+        return <span className="text-xs sm:text-sm md:text-base">{faculty?.name || "-"}</span>;
+      },
     },
     {
       title: "Actions",
       dataKey: "actions",
-      row: (data: StudentType) => (
+      row: (data: FacultyMemberType) => (
         <div className="flex items-center gap-2 justify-end">
           <button
             onClick={() => {
-              // TODO: Navigate to view page
               toast.info("View functionality coming soon");
             }}
             className="p-1 hover:bg-t-green/20 rounded transition-colors"
@@ -68,7 +45,6 @@ export default function Students() {
           </button>
           <button
             onClick={() => {
-              // TODO: Navigate to edit page
               toast.info("Edit functionality coming soon");
             }}
             className="p-1 hover:bg-t-green/20 rounded transition-colors"
@@ -79,13 +55,13 @@ export default function Students() {
           <DeleteAction
             handleDeleteSubmit={async () => {
               try {
-                await deleteStudent.mutateAsync(data._id);
-                toast.success("Student deleted successfully");
+                await deleteFacultyMember.mutateAsync(data._id);
+                toast.success("Faculty member deleted successfully");
               } catch {
-                toast.error("Failed to delete student");
+                toast.error("Failed to delete faculty member");
               }
             }}
-            isLoading={deleteStudent.isPending}
+            isLoading={deleteFacultyMember.isPending}
           />
         </div>
       ),
@@ -96,16 +72,16 @@ export default function Students() {
     <div className="p-3 sm:p-4 md:p-6">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-t-gray/70">
-          Students
+          Faculty Members
           {data?.pagination?.count ? ` (${data.pagination.count})` : ""}
         </h1>
-        <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your students</p>
+        <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your faculty members</p>
       </div>
 
       <div className="mb-3 sm:mb-4 flex gap-2 sm:gap-4">
         <input
           type="text"
-          placeholder="Search students..."
+          placeholder="Search faculty members..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);

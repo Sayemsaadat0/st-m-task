@@ -14,28 +14,28 @@ export type DashboardTableProps = {
 
 const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) => {
   return (
-    <div className="overflow-x-auto max-w-full border bg-white border-t-black rounded-[10px] overflow-hidden">
+    <div className="overflow-x-auto max-w-full border  border-t-black  overflow-hidden">
       <div className="w-full">
         <table className="w-full text-left">
           <thead className="sticky z-10 top-0 w-full h-fit bg-t-green">
             <tr className=''>
               {columns.map((column, index) => (
-                <th key={index} scope="col" className="px-3 py-3 text-t-black last:text-right">
+                <th key={index} scope="col" className="text-xs sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 last:text-right">
                   {column.title}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="w-full bg-white">
+          <tbody className="w-full ">
             {!isLoading &&
               data &&
               data.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className={`${rowIndex !== data.length - 1 ? 'border-b' : ''} border-t-black`}
+                  // className={`${rowIndex !== data.length - 1 ? 'border' : ''} border-t-gray/30`}
                 >
                   {columns.map((column, colIndex) => (
-                    <td key={colIndex} className="px-3 py-3 wrap-break-word last:text-right text-black">
+                    <td key={colIndex} className="text-xs sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 border border-t-gray/30 rounded-[10px] wrap-break-word last:text-right text-t-gray/70">
                       {column.row(row, rowIndex)}
                     </td>
                   ))}
@@ -44,13 +44,13 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
           </tbody>
         </table>
         {isLoading && (
-          <div className="flex justify-center items-center h-10 my-6 ">
-            <p className="text-black">Loading...</p>
+          <div className="flex justify-center items-center h-10 my-4 sm:my-6">
+            <p className="text-xs sm:text-sm md:text-base text-t-gray/70">Loading...</p>
           </div>
         )}
         {!isLoading && data.length === 0 && (
-          <div className="flex justify-center items-center my-6 ">
-            <p className="text-black">No Data Available</p>
+          <div className="flex justify-center items-center my-4 sm:my-6">
+            <p className="text-xs sm:text-sm md:text-base text-t-gray/70">No Data Available</p>
           </div>
         )}
       </div>

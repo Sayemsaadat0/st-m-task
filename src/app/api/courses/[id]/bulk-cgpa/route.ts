@@ -78,7 +78,7 @@ export async function GET(
     }
 
     // Get assigned students
-    let students = []
+    let students: any[] = []
     if (course.assignee && Array.isArray(course.assignee) && course.assignee.length > 0) {
       const studentIds = course.assignee
         .map((id: any) => {

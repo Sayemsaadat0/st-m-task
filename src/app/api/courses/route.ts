@@ -246,6 +246,13 @@ export async function POST(request: Request) {
       }
     }
     
+    if (!populatedCourse) {
+      return NextResponse.json(
+        { success: false, message: "Failed to retrieve created course" },
+        { status: 500 }
+      )
+    }
+    
     // Populate faculty details and add status to assignees
     const { Student } = await import("@/models/student")
     const courseObj = populatedCourse.toObject ? populatedCourse.toObject() : populatedCourse

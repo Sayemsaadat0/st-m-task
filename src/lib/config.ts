@@ -1,4 +1,4 @@
-import { DashboardIcon, StudentIcon, CourseIcon, FacultyIcon } from './../components/icons/RootIcons';
+import { DashboardIcon, StudentIcon, CourseIcon, FacultyIcon, FacultyMembersIcon } from './../components/icons/RootIcons';
 export const ROUTES = {
     // Main routes
     DASHBOARD: "/",
@@ -13,6 +13,7 @@ export const ROUTES = {
     FACULTY: "/faculty",
     FACULTY_CREATE: "/faculty/create",
     FACULTY_UPDATE: "/faculty/update",
+    FACULTY_MEMBERS: "/faculty-members",
 } as const;
 
 
@@ -23,14 +24,14 @@ export const SIDEBAR_ROUTES = [
         title: "Dashboard",
         path: ROUTES.DASHBOARD,
         icon: DashboardIcon,
-        iconSize: "20" as const,
+        iconSize: "16" as const,
     },
     {
         id: "students",
         title: "Students",
         path: ROUTES.STUDENTS,
         icon: StudentIcon,
-        iconSize: "24" as const, 
+        iconSize: "120" as const, 
     },
     {
         id: "courses",
@@ -44,6 +45,13 @@ export const SIDEBAR_ROUTES = [
         title: "Faculty",
         path: ROUTES.FACULTY,
         icon: FacultyIcon,
+        iconSize: "20" as const,
+    },
+    {
+        id: "faculty-members",
+        title: "Faculty Members",
+        path: ROUTES.FACULTY_MEMBERS,
+        icon: FacultyMembersIcon,
         iconSize: "20" as const,
     },
 ]

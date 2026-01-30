@@ -3,6 +3,8 @@ import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "sonner";
+import TanStackQueryProvider from "@/providers/TanstackQueryProvider";
 
 
 const ubuntu = Ubuntu({
@@ -30,10 +32,12 @@ export default function RootLayout({
         className={`${ubuntu.className}  `}
       >
         <NextTopLoader color="#B6F500" easing="ease" showSpinner={false} />
-
-        <AdminLayout>
-          {children}
-        </AdminLayout>
+        <TanStackQueryProvider>
+          <AdminLayout>
+            {children}
+          </AdminLayout>
+        </TanStackQueryProvider>
+        <Toaster />
       </body>
     </html>
   );
