@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DashboardTable, {
   type DashboardTableColumn,
 } from "@/components/shared/DashboardTable";
