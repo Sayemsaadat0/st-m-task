@@ -1,29 +1,129 @@
-export default function Dashboard() {
+"use client";
+
+import React, { useState } from 'react';
+import DashboardTable, {
+  type DashboardTableColumn,
+} from "@/components/shared/DashboardTable";
+
+type DashboardDataType = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+};
+
+const Dashboard = () => {
+  const [isLoading] = useState(false);
+
+  // Fake data
+  const fakeData: DashboardDataType[] = [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@example.com",
+      role: "Admin",
+      status: "Active",
+      createdAt: "2024-01-15T10:30:00Z",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane.smith@example.com",
+      role: "User",
+      status: "Active",
+      createdAt: "2024-01-20T14:45:00Z",
+    },
+    {
+      id: 3,
+      name: "Bob Johnson",
+      email: "bob.johnson@example.com",
+      role: "Moderator",
+      status: "Inactive",
+      createdAt: "2024-02-01T09:15:00Z",
+    },
+    {
+      id: 4,
+      name: "Alice Williams",
+      email: "alice.williams@example.com",
+      role: "User",
+      status: "Active",
+      createdAt: "2024-02-10T16:20:00Z",
+    },
+    {
+      id: 5,
+      name: "Charlie Brown",
+      email: "charlie.brown@example.com",
+      role: "User",
+      status: "Active",
+      createdAt: "2024-02-15T11:00:00Z",
+    },
+  ];
+
+  const formatDatestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const DashboardColumns: DashboardTableColumn[] = [
+    {
+      title: "Name",
+      dataKey: "name",
+      row: (data: DashboardDataType) => (
+        <p className="text-black">{data?.name}</p>
+      ),
+    },
+    {
+      title: "Email",
+      dataKey: "email",
+      row: (data: DashboardDataType) => (
+        <p className="text-black">{data?.email}</p>
+      ),
+    },
+    {
+      title: "Role",
+      dataKey: "role",
+      row: (data: DashboardDataType) => (
+        <p className="text-black">{data?.role}</p>
+      ),
+    },
+    {
+      title: "Status",
+      dataKey: "status",
+      row: (data: DashboardDataType) => (
+        <p className="text-black">{data?.status}</p>
+      ),
+    },
+    {
+      title: "Created At",
+      dataKey: "createdAt",
+      row: (data: DashboardDataType) => (
+        <p className="text-black">
+          {data?.createdAt ? formatDatestamp(data.createdAt) : "-"}
+        </p>
+      ),
+    },
+  ];
+
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-white">Dashboard</h1>
-        <p className="text-white/70 mt-2">Welcome to your dashboard</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-t-black/70 rounded-lg p-6 border border-white/10">
-          <h3 className="text-white/70 text-sm font-medium mb-2">Total Students</h3>
-          <p className="text-3xl font-bold text-white">0</p>
-        </div>
-        <div className="bg-t-black/70 rounded-lg p-6 border border-white/10">
-          <h3 className="text-white/70 text-sm font-medium mb-2">Total Courses</h3>
-          <p className="text-3xl font-bold text-white">0</p>
-        </div>
-        <div className="bg-t-black/70 rounded-lg p-6 border border-white/10">
-          <h3 className="text-white/70 text-sm font-medium mb-2">Total Faculty</h3>
-          <p className="text-3xl font-bold text-white">0</p>
-        </div>
-        <div className="bg-t-black/70 rounded-lg p-6 border border-white/10">
-          <h3 className="text-white/70 text-sm font-medium mb-2">Active Sessions</h3>
-          <p className="text-3xl font-bold text-white">0</p>
-        </div>
-      </div>
+    <div className="p-5">
+      <h1 className="text-2xl font-semibold text-t-black mb-4">
+        Dashboard
+        {fakeData.length ? ` (${fakeData.length})` : ""}
+      </h1>
+
+      <DashboardTable
+        columns={DashboardColumns}
+        isLoading={isLoading}
+        data={fakeData}
+      />
     </div>
   );
-}
+};
+
+export default Dashboard;
