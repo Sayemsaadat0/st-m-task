@@ -1,26 +1,30 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-background: var(--background);
+  --font-sans: var(--font-ubuntu), ui-sans-serif, system-ui, sans-serif;
+  --color-t-black : #2e2e30;
+  --color-t-gray : #fdf3e9;
+  --color-t-orange : #ffae17 ;
+  --color-t-orange-light : #fdc864  ;
+  --color-t-green : #B6F500 ;
+  /* --color-custom-button-color: var(--custom-button-color); */
+}
+button{
+  cursor: pointer;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--color-t-black);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background;
+    font-family: var(--font-ubuntu);
+    
   }
+
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
