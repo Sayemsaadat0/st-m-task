@@ -44,9 +44,16 @@ export interface StudentResponse {
     result: StudentType;
 }
 
-export const useGetStudents = (currentPage: number = 1, perPage: number = 10, search: string = "", status?: string) => {
+export const useGetStudents = (
+    currentPage: number = 1, 
+    perPage: number = 10, 
+    search: string = "", 
+    status?: string,
+    course?: string,
+    year?: string
+) => {
     return useQuery<StudentsResponse>({
-        queryKey: ["students", currentPage, perPage, search, status],
+        queryKey: ["students", currentPage, perPage, search, status, course, year],
         queryFn: () => {
             const params = new URLSearchParams({
                 current_page: currentPage.toString(),
@@ -54,6 +61,8 @@ export const useGetStudents = (currentPage: number = 1, perPage: number = 10, se
             });
             if (search) params.append("search", search);
             if (status) params.append("status", status);
+            if (course) params.append("course", course);
+            if (year) params.append("year", year);
             
             return axiousResuest({
                 url: `api/students?${params.toString()}`,
@@ -100,11 +109,11 @@ export const useCreateStudent = () => {
     });
 };
 
-export const useUpdateStudent = () => {
+export const useUpdateStudent = (id: string) => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: Partial<StudentType> }) =>
+        mutationFn: (data: Partial<StudentType>) =>
             axiousResuest({
                 url: `api/students/${id}`,
                 method: "patch",
@@ -113,9 +122,9 @@ export const useUpdateStudent = () => {
                 },
                 data,
             }),
-        onSuccess: (_, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["students"] });
-            queryClient.invalidateQueries({ queryKey: ["student", variables.id] });
+            queryClient.invalidateQueries({ queryKey: ["student", id] });
         },
     });
 };

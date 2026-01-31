@@ -1,28 +1,42 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardTable, { type DashboardTableColumn } from "@/components/shared/DashboardTable";
 import { useGetStudents, useDeleteStudent, type StudentType } from "../_components/hooks/students.hooks";
-import { Eye, Pencil } from "lucide-react";
+import { useGetCourses } from "../_components/hooks/courses.hooks";
+import { SquareArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import DeleteAction from "@/components/shared/DeleteAction";
+import StudentForm from "./_components/StudentForm";
 
 export default function Students() {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [search, setSearch] = useState("");
+  const [courseFilter, setCourseFilter] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
 
-  const { data, isLoading } = useGetStudents(currentPage, perPage, search);
+  const { data, isLoading } = useGetStudents(currentPage, perPage, search, undefined, courseFilter, yearFilter);
+  const { data: coursesData } = useGetCourses(1, 100, ""); // Get all courses for dropdown
   const deleteStudent = useDeleteStudent();
+
+  const handleNavigateToProfile = (id: string) => {
+    router.push(`/students/${id}`);
+  };
 
   const columns: DashboardTableColumn[] = [
     {
       title: "Name",
       dataKey: "name",
       row: (data: StudentType) => (
-        <span className="text-xs sm:text-sm md:text-base">
+        <button
+          onClick={() => handleNavigateToProfile(data._id)}
+          className="text-xs sm:text-sm md:text-base text-t-green hover:text-t-orange transition-colors cursor-pointer"
+        >
           {data.first_name} {data.last_name}
-        </span>
+        </button>
       ),
     },
     {
@@ -34,6 +48,15 @@ export default function Students() {
       title: "Phone",
       dataKey: "phone",
       row: (data: StudentType) => <span className="text-xs sm:text-sm md:text-base">{data.phone}</span>,
+    },
+    {
+      title: "Address",
+      dataKey: "address",
+      row: (data: StudentType) => (
+        <span className="text-xs sm:text-sm md:text-base text-white/70 max-w-xs truncate" title={data.address}>
+          {data.address}
+        </span>
+      ),
     },
     {
       title: "CGPA",
@@ -57,25 +80,13 @@ export default function Students() {
       row: (data: StudentType) => (
         <div className="flex items-center gap-2 justify-end">
           <button
-            onClick={() => {
-              // TODO: Navigate to view page
-              toast.info("View functionality coming soon");
-            }}
-            className="p-1 hover:bg-t-green/20 rounded transition-colors"
-            title="View"
+            onClick={() => handleNavigateToProfile(data._id)}
+            className="p-1 hover:bg-t-green/20 transition-colors"
+            title="View Profile"
           >
-            <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-t-gray/70" />
+            <SquareArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-t-gray/70" />
           </button>
-          <button
-            onClick={() => {
-              // TODO: Navigate to edit page
-              toast.info("Edit functionality coming soon");
-            }}
-            className="p-1 hover:bg-t-green/20 rounded transition-colors"
-            title="Edit"
-          >
-            <Pencil className="w-3 h-3 sm:w-4 sm:h-4 text-t-gray/70" />
-          </button>
+          <StudentForm instance={data} iconOnly={true} />
           <DeleteAction
             handleDeleteSubmit={async () => {
               try {
@@ -94,15 +105,18 @@ export default function Students() {
 
   return (
     <div className="p-3 sm:p-4 md:p-6">
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-t-gray/70">
-          Students
-          {data?.pagination?.count ? ` (${data.pagination.count})` : ""}
-        </h1>
-        <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your students</p>
+      <div className="mb-4 sm:mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-t-gray/70">
+            Students
+            {data?.pagination?.count ? ` (${data.pagination.count})` : ""}
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your students</p>
+        </div>
+        <StudentForm instance={null} iconOnly={false} />
       </div>
 
-      <div className="mb-3 sm:mb-4 flex gap-2 sm:gap-4">
+      <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4">
         <input
           type="text"
           placeholder="Search students..."
@@ -111,8 +125,41 @@ export default function Students() {
             setSearch(e.target.value);
             setCurrentPage(1);
           }}
-          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-t-green w-full"
+          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-t-green flex-1"
         />
+        <select
+          value={courseFilter}
+          onChange={(e) => {
+            setCourseFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white focus:outline-none focus:border-t-green min-w-[150px]"
+        >
+          <option value="">All Courses</option>
+          {coursesData?.results?.map((course) => (
+            <option key={course._id} value={course._id}>
+              {course.course_name} {course.course_code ? `(${course.course_code})` : ""}
+            </option>
+          ))}
+        </select>
+        <select
+          value={yearFilter}
+          onChange={(e) => {
+            setYearFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white focus:outline-none focus:border-t-green w-full sm:w-32"
+        >
+          <option value="">All Years</option>
+          {Array.from({ length: 7 }, (_, i) => {
+            const year = new Date().getFullYear() - 3 + i;
+            return (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            );
+          })}
+        </select>
       </div>
 
       <DashboardTable

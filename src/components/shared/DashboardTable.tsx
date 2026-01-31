@@ -27,7 +27,21 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
             </tr>
           </thead>
           <tbody className="w-full ">
-            {!isLoading &&
+            {isLoading ? (
+              // Skeleton rows
+              Array.from({ length: 5 }).map((_, rowIndex) => (
+                <tr key={rowIndex}>
+                  {columns.map((column, colIndex) => (
+                    <td
+                      key={colIndex}
+                      className="text-xs sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 border border-t-gray/30 rounded-[10px] wrap-break-word last:text-right"
+                    >
+                      <div className="h-4 bg-t-gray/20 rounded animate-pulse" style={{ width: colIndex === 0 ? '60%' : colIndex === columns.length - 1 ? '40%' : '80%' }} />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
               data &&
               data.map((row, rowIndex) => (
                 <tr
@@ -40,14 +54,10 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
                     </td>
                   ))}
                 </tr>
-              ))}
+              ))
+            )}
           </tbody>
         </table>
-        {isLoading && (
-          <div className="flex justify-center items-center h-10 my-4 sm:my-6">
-            <p className="text-xs sm:text-sm md:text-base text-t-gray/70">Loading...</p>
-          </div>
-        )}
         {!isLoading && data.length === 0 && (
           <div className="flex justify-center items-center my-4 sm:my-6">
             <p className="text-xs sm:text-sm md:text-base text-t-gray/70">No Data Available</p>

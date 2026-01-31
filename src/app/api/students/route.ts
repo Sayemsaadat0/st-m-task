@@ -52,6 +52,8 @@ export async function GET(request: Request) {
     const perPage = parseInt(searchParams.get("per_page") || "10", 10)
     const searchQuery = searchParams.get("search") || ""
     const statusFilter = searchParams.get("status") || "" // "ongoing" or "passed"
+    const courseFilter = searchParams.get("course") || "" // Course ID to filter students
+    const yearFilter = searchParams.get("year") || "" // Year to filter by enrollment date
 
     if (currentPage < 1) {
       return NextResponse.json(
@@ -88,10 +90,40 @@ export async function GET(request: Request) {
       ]
     }
 
-    // Fetch all students first (for status filtering)
+    // Note: Course filtering will be done after fetching to avoid $or conflicts with search
+
+    // Filter by year (enrollment year from createdAt)
+    if (yearFilter) {
+      const year = parseInt(yearFilter, 10)
+      if (!isNaN(year) && year > 1900 && year <= new Date().getFullYear() + 1) {
+        const startDate = new Date(year, 0, 1) // January 1st of the year
+        const endDate = new Date(year + 1, 0, 1) // January 1st of next year
+        filter.createdAt = {
+          $gte: startDate,
+          $lt: endDate,
+        }
+      }
+    }
+
+    // Fetch all students first
     let allStudents = await Student.find(filter)
       .sort({ createdAt: -1 })
       .lean()
+
+    // Filter by course ID if provided (post-query filter for better compatibility)
+    if (courseFilter && Types.ObjectId.isValid(courseFilter)) {
+      const courseObjectId = new Types.ObjectId(courseFilter)
+      allStudents = allStudents.filter((student: any) => {
+        const courses = student.courses || []
+        return courses.some((courseId: any) => {
+          if (typeof courseId === "string") {
+            return courseId === courseFilter || courseId === courseObjectId.toString()
+          }
+          const courseObjId = courseId._id || courseId
+          return courseObjId && courseObjId.toString() === courseObjectId.toString()
+        })
+      })
+    }
 
     // Filter by status if provided
     if (statusFilter) {
