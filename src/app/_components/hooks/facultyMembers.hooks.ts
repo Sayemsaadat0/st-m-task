@@ -10,6 +10,7 @@ export interface FacultyMemberType {
         _id: string;
         name: string;
     };
+    courses_count?: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -89,11 +90,11 @@ export const useCreateFacultyMember = () => {
     });
 };
 
-export const useUpdateFacultyMember = () => {
+export const useUpdateFacultyMember = (id: string) => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: Partial<FacultyMemberType> }) =>
+        mutationFn: (data: Partial<FacultyMemberType>) =>
             axiousResuest({
                 url: `api/faculty-members/${id}`,
                 method: "patch",
@@ -102,9 +103,9 @@ export const useUpdateFacultyMember = () => {
                 },
                 data,
             }),
-        onSuccess: (_, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["faculty-members"] });
-            queryClient.invalidateQueries({ queryKey: ["faculty-member", variables.id] });
+            queryClient.invalidateQueries({ queryKey: ["faculty-member", id] });
         },
     });
 };

@@ -63,7 +63,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full px-3 rounded-md border border-gray-300 outline-none flex items-center justify-between gap-2 text-left ",
+          "w-full px-3 border border-t-gray/30 bg-t-black text-white outline-none flex items-center justify-between gap-2 text-left focus:border-t-green transition-colors",
           buttonMinHeight,
           buttonPadding,
           className
@@ -76,12 +76,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               return (
                 <span
                   key={option?.value || idx}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded-full text-sm text-black"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-t-green/20 border border-t-green/30 rounded-full text-sm text-white"
                 >
                   {label}
                   <span
                     onClick={(e) => removeOption(option?.value || "", e)}
-                    className="hover:bg-gray-200 rounded-md p-0.5 cursor-pointer"
+                    className="hover:bg-t-green/30 rounded-md p-0.5 cursor-pointer"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
@@ -97,12 +97,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               );
             })
           ) : (
-            <span className="text-gray-400">{placeholder}</span>
+            <span className="text-white/50">{placeholder}</span>
           )}
         </div>
         <ChevronDownIcon
           className={cn(
-            "w-4 h-4 transition-transform text-gray-400 shrink-0",
+            "w-4 h-4 transition-transform text-white/50 shrink-0",
             open && "transform rotate-180"
           )}
         />
@@ -111,12 +111,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       {open && (
         <div 
           className={cn(
-            "absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-auto",
+            "absolute z-[9999] mt-1 bg-t-black border border-t-gray/30 shadow-xl overflow-auto",
             "w-full",
-            value.length > 5 ? "max-h-80" : "max-h-60"
+            "max-h-48"
           )}
         >
-          <div className="flex flex-wrap gap-2 p-2">
+          <div className="p-1">
             {options.map((option) => {
               const isSelected = value.includes(option.value);
               return (
@@ -124,21 +124,21 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   key={option.value}
                   onClick={() => toggleOption(option.value)}
                   className={cn(
-                    "px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 rounded-md border transition-colors",
+                    "px-3 py-2 cursor-pointer flex items-center gap-2 transition-colors rounded-sm",
                     isSelected 
-                      ? "bg-t-orange/10 border-t-orange" 
-                      : "bg-white border-gray-200 hover:border-gray-300"
+                      ? "bg-t-green/20 text-white" 
+                      : "hover:bg-t-gray/10 text-white/90"
                   )}
                 >
                   <div
                     className={cn(
                       "w-4 h-4 border rounded flex items-center justify-center shrink-0",
-                      isSelected && "bg-t-orange border-t-orange"
+                      isSelected ? "bg-t-green border-t-green" : "border-t-gray/30"
                     )}
                   >
                     {isSelected && <CheckIcon className="w-3 h-3 text-white" />}
                   </div>
-                  <span className="text-sm text-black whitespace-nowrap">{option.label}</span>
+                  <span className="text-sm">{option.label}</span>
                 </div>
               );
             })}

@@ -116,16 +116,16 @@ export default function Students() {
         <StudentForm instance={null} iconOnly={false} />
       </div>
 
-      <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4">
+      <div className="mb-2 flex flex-col sm:flex-row gap-2">
         <input
           type="text"
-          placeholder="Search students..."
+          placeholder="Search..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setCurrentPage(1);
           }}
-          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-t-green flex-1"
+          className="text-xs sm:text-sm px-2 py-1 bg-t-black border border-t-gray/30 text-white placeholder-white/50 focus:outline-none focus:border-t-green w-full sm:w-48"
         />
         <select
           value={courseFilter}
@@ -133,7 +133,7 @@ export default function Students() {
             setCourseFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white focus:outline-none focus:border-t-green min-w-[150px]"
+          className="text-xs sm:text-sm px-2 py-1 bg-t-black border border-t-gray/30 text-white focus:outline-none focus:border-t-green w-full sm:w-40"
         >
           <option value="">All Courses</option>
           {coursesData?.results?.map((course) => (
@@ -148,7 +148,7 @@ export default function Students() {
             setYearFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white focus:outline-none focus:border-t-green w-full sm:w-32"
+          className="text-xs sm:text-sm px-2 py-1 bg-t-black border border-t-gray/30 text-white focus:outline-none focus:border-t-green w-full sm:w-24"
         >
           <option value="">All Years</option>
           {Array.from({ length: 7 }, (_, i) => {

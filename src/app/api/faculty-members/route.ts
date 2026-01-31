@@ -51,13 +51,27 @@ export async function GET(request: Request) {
       .limit(perPage)
       .lean()
 
+    // Add course count for each faculty member
+    const { Course } = await import("@/models/course")
+    const facultyMembersWithCourseCount = await Promise.all(
+      facultyMembers.map(async (member: any) => {
+        const courseCount = await Course.countDocuments({
+          faculty_members: member._id,
+        })
+        return {
+          ...member,
+          courses_count: courseCount,
+        }
+      })
+    )
+
     const totalPages = Math.ceil(count / perPage)
 
     return NextResponse.json(
       {
         success: true,
         message: "Faculty members retrieved",
-        results: facultyMembers,
+        results: facultyMembersWithCourseCount,
         pagination: {
           current_page: currentPage,
           per_page: perPage,

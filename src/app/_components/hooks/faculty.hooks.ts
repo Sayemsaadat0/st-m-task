@@ -33,15 +33,16 @@ export interface SingleFacultyResponse {
     result: FacultyType;
 }
 
-export const useGetFaculty = (currentPage: number = 1, perPage: number = 10, search: string = "") => {
+export const useGetFaculty = (currentPage: number = 1, perPage: number = 10, search: string = "", year?: string) => {
     return useQuery<FacultyResponse>({
-        queryKey: ["faculty", currentPage, perPage, search],
+        queryKey: ["faculty", currentPage, perPage, search, year],
         queryFn: () => {
             const params = new URLSearchParams({
                 current_page: currentPage.toString(),
                 per_page: perPage.toString(),
             });
             if (search) params.append("search", search);
+            if (year) params.append("year", year);
             
             return axiousResuest({
                 url: `api/faculty?${params.toString()}`,
@@ -88,11 +89,11 @@ export const useCreateFaculty = () => {
     });
 };
 
-export const useUpdateFaculty = () => {
+export const useUpdateFaculty = (id: string) => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: Partial<FacultyType> }) =>
+        mutationFn: (data: Partial<FacultyType>) =>
             axiousResuest({
                 url: `api/faculty/${id}`,
                 method: "patch",
@@ -101,9 +102,9 @@ export const useUpdateFaculty = () => {
                 },
                 data,
             }),
-        onSuccess: (_, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["faculty"] });
-            queryClient.invalidateQueries({ queryKey: ["faculty", variables.id] });
+            queryClient.invalidateQueries({ queryKey: ["faculty", id] });
         },
     });
 };

@@ -89,11 +89,11 @@ export const useCreateCourse = () => {
     });
 };
 
-export const useUpdateCourse = () => {
+export const useUpdateCourse = (id: string) => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: Partial<CourseType> }) =>
+        mutationFn: (data: Partial<CourseType>) =>
             axiousResuest({
                 url: `api/courses/${id}`,
                 method: "patch",
@@ -102,9 +102,9 @@ export const useUpdateCourse = () => {
                 },
                 data,
             }),
-        onSuccess: (_, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["courses"] });
-            queryClient.invalidateQueries({ queryKey: ["course", variables.id] });
+            queryClient.invalidateQueries({ queryKey: ["course", id] });
         },
     });
 };

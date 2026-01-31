@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import "@/DB/db"
 import { Course } from "@/models/course"
 import { FacultyMember } from "@/models/facultyMember"
+import { Student } from "@/models/student"
 import { Types } from "mongoose"
 
 export const dynamic = "force-dynamic"
@@ -77,7 +78,6 @@ export async function GET(request: Request) {
     }
     
     // Populate faculty details and add status to assignees
-    const { Student } = await import("@/models/student")
     const coursesWithFaculty = await Promise.all(
       courses.map(async (course: any) => {
         const courseObj = course.toObject ? course.toObject() : course

@@ -20,6 +20,7 @@ export async function GET(request: Request) {
     const currentPage = parseInt(searchParams.get("current_page") || "1", 10)
     const perPage = parseInt(searchParams.get("per_page") || "10", 10)
     const searchQuery = searchParams.get("search") || ""
+    const yearFilter = searchParams.get("year") || "" // Year to filter by creation date
 
     // Validate pagination parameters
     if (currentPage < 1) {
@@ -42,6 +43,19 @@ export async function GET(request: Request) {
     if (searchQuery.trim()) {
       const searchRegex = { $regex: searchQuery.trim(), $options: "i" }
       filter.name = searchRegex
+    }
+
+    // Filter by year (creation year from createdAt)
+    if (yearFilter) {
+      const year = parseInt(yearFilter, 10)
+      if (!isNaN(year) && year > 1900 && year <= new Date().getFullYear() + 1) {
+        const startDate = new Date(year, 0, 1) // January 1st of the year
+        const endDate = new Date(year + 1, 0, 1) // January 1st of next year
+        filter.createdAt = {
+          $gte: startDate,
+          $lt: endDate,
+        }
+      }
     }
 
     // Calculate pagination

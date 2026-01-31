@@ -3,23 +3,29 @@
 import React, { useState } from "react";
 import DashboardTable, { type DashboardTableColumn } from "@/components/shared/DashboardTable";
 import { useGetFaculty, useDeleteFaculty, type FacultyType } from "../_components/hooks/faculty.hooks";
-import { Eye, Pencil } from "lucide-react";
+import { SquareArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import DeleteAction from "@/components/shared/DeleteAction";
+import FacultyForm from "./_components/FacultyForm";
 
 export default function Faculty() {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [search, setSearch] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
 
-  const { data, isLoading } = useGetFaculty(currentPage, perPage, search);
+  const { data, isLoading } = useGetFaculty(currentPage, perPage, search, yearFilter);
   const deleteFaculty = useDeleteFaculty();
 
   const columns: DashboardTableColumn[] = [
     {
       title: "Name",
       dataKey: "name",
-      row: (data: FacultyType) => <span className="text-xs sm:text-sm md:text-base">{data.name}</span>,
+      row: (data: FacultyType) => (
+        <span className="text-xs sm:text-sm md:text-base text-t-green hover:text-t-orange transition-colors cursor-pointer">
+          {data.name}
+        </span>
+      ),
     },
     {
       title: "Faculty Members",
@@ -33,24 +39,7 @@ export default function Faculty() {
       dataKey: "actions",
       row: (data: FacultyType) => (
         <div className="flex items-center gap-2 justify-end">
-          <button
-            onClick={() => {
-              toast.info("View functionality coming soon");
-            }}
-            className="p-1 hover:bg-t-green/20 rounded transition-colors"
-            title="View"
-          >
-            <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-t-gray/70" />
-          </button>
-          <button
-            onClick={() => {
-              toast.info("Edit functionality coming soon");
-            }}
-            className="p-1 hover:bg-t-green/20 rounded transition-colors"
-            title="Edit"
-          >
-            <Pencil className="w-3 h-3 sm:w-4 sm:h-4 text-t-gray/70" />
-          </button>
+          <FacultyForm instance={data} iconOnly={true} />
           <DeleteAction
             handleDeleteSubmit={async () => {
               try {
@@ -69,25 +58,46 @@ export default function Faculty() {
 
   return (
     <div className="p-3 sm:p-4 md:p-6">
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-t-gray/70">
-          Faculty
-          {data?.pagination?.count ? ` (${data.pagination.count})` : ""}
-        </h1>
-        <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your faculty</p>
+      <div className="mb-4 sm:mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-t-gray/70">
+            Faculty
+            {data?.pagination?.count ? ` (${data.pagination.count})` : ""}
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your faculty</p>
+        </div>
+        <FacultyForm instance={null} iconOnly={false} />
       </div>
 
-      <div className="mb-3 sm:mb-4 flex gap-2 sm:gap-4">
+      <div className="mb-2 flex flex-col sm:flex-row gap-2">
         <input
           type="text"
-          placeholder="Search faculty..."
+          placeholder="Search..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setCurrentPage(1);
           }}
-          className="text-xs sm:text-sm md:text-base px-3 sm:px-4 py-1.5 sm:py-2 bg-t-black border border-t-gray/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-t-green w-full"
+          className="text-xs sm:text-sm px-2 py-1 bg-t-black border border-t-gray/30 text-white placeholder-white/50 focus:outline-none focus:border-t-green w-full sm:w-48"
         />
+        <select
+          value={yearFilter}
+          onChange={(e) => {
+            setYearFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="text-xs sm:text-sm px-2 py-1 bg-t-black border border-t-gray/30 text-white focus:outline-none focus:border-t-green w-full sm:w-24"
+        >
+          <option value="">All Years</option>
+          {Array.from({ length: 7 }, (_, i) => {
+            const year = new Date().getFullYear() - 3 + i;
+            return (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            );
+          })}
+        </select>
       </div>
 
       <DashboardTable
