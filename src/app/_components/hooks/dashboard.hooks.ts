@@ -28,6 +28,10 @@ export interface SummaryResultType {
         credits: number;
         enrollment_count: number;
     }>;
+    enrollment_over_time: Array<{
+        date: string;
+        enrollment_count: number;
+    }>;
 }
 
 export interface SummaryResponse {

@@ -15,17 +15,13 @@ export default function AssignGrades() {
 
   const course = bulkCgpaData?.result?.course;
   
-  // Students already have status from the API
   const studentsWithStatus = bulkCgpaData?.result?.students || [];
 
-  // Initialize student grades when students data loads
   React.useEffect(() => {
     const students = bulkCgpaData?.result?.students || [];
     if (students.length > 0) {
       const initialGrades: Record<string, number> = {};
       students.forEach((student) => {
-        // If student already has a grade, we'll need to fetch it from their grades array
-        // For now, we'll leave it empty and let user enter
         initialGrades[student._id] = 0;
       });
       setStudentGrades(initialGrades);
@@ -53,7 +49,6 @@ export default function AssignGrades() {
       return;
     }
 
-    // Filter out students with 0 CGPA (not entered)
     const studentsToSubmit = Object.entries(studentGrades)
       .filter(([, cgpa]) => cgpa > 0)
       .map(([student_id, cgpa]) => ({

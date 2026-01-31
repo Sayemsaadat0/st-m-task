@@ -9,7 +9,6 @@
   --color-t-orange : #ffae17 ;
   --color-t-orange-light : #fdc864  ;
   --color-t-green : #B6F500 ;
-  /* --color-custom-button-color: var(--custom-button-color); */
 }
 button{
   cursor: pointer;
@@ -26,7 +25,6 @@ button{
     
   }
 
-  /* Custom scrollbar styles */
   * {
     scrollbar-width: thin;
     scrollbar-color: rgba(182, 245, 0, 0.3) transparent;

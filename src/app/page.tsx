@@ -2,6 +2,7 @@
 import React from 'react'
 import SummaryCards from './_components/SummaryCards';
 import DashboardChart from './_components/DashboardChart';
+import EnrollmentOverTimeChart from './_components/EnrollmentOverTimeChart';
 import LeaderboardTable from './_components/LeaderboardTable';
 import { useGetSummary } from './_components/hooks/dashboard.hooks';
 import Image from 'next/image';
@@ -48,15 +49,12 @@ const Dashboard = () => {
       <div className="">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-t-gray/70 mb-4 sm:mb-6">Dashboard</h1>
 
-        {/* Summary Cards */}
         <SummaryCards
           totals={result.totals}
           student_status={result.student_status}
         />
 
-        {/* Charts and Tables Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Course Enrollments Chart */}
           <DashboardChart
             data={result.most_popular_courses.map(course => ({
               course_name: course.course_name,
@@ -64,8 +62,13 @@ const Dashboard = () => {
             }))}
           />
 
-          {/* Top Students Leaderboard */}
           <LeaderboardTable students={result.top_students} />
+        </div>
+
+        <div className="mt-6">
+          <EnrollmentOverTimeChart
+            data={result.enrollment_over_time || []}
+          />
         </div>
       </div>
     </div>

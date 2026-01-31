@@ -28,7 +28,6 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
           </thead>
           <tbody className="w-full ">
             {isLoading ? (
-              // Skeleton rows
               Array.from({ length: 5 }).map((_, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.map((column, colIndex) => (
@@ -46,7 +45,6 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
               data.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  // className={`${rowIndex !== data.length - 1 ? 'border' : ''} border-t-gray/30`}
                 >
                   {columns.map((column, colIndex) => (
                     <td key={colIndex} className="text-xs sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 border border-t-gray/30 rounded-[10px] wrap-break-word last:text-right text-t-gray/70">

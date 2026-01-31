@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-// import { sidebarRoutes, type SidebarRoute } from "@/dummy/constant.data";
 import {
     Sheet,
     SheetContent,
@@ -20,8 +19,6 @@ import {
 } from "@/components/ui/tooltip";
 import Image from "next/image";
 import Link from "next/link";
-// import { useAuthStore } from "@/store/authStore";
-// import { LogoIcon } from "./icons/icons"
 
 interface SidebarProps {
     isCollapsed: boolean;
@@ -50,7 +47,6 @@ export const AdminSidebarItem: React.FC<SidebarItemProps> = ({
     const [isExpanded, setIsExpanded] = useState(false);
     const hasChildren = false;
     const isActive = pathname === route.path;
-    // const Icon = null;
 
     const handleClick = () => {
         if (hasChildren) {
@@ -136,14 +132,8 @@ export const AdminSidebarContent: React.FC<{
     onToggleCollapse: () => void;
 }> = ({ open, setOpen, isCollapsed, isMobile = false, onToggleCollapse }) => {
 
-    // Filter routes based on user role
-    //   const filteredRoutes = SIDEBAR_ROUTES.filter((route) => {
-    //     return true;
-    //   });
-
     return (
         <div className="flex h-full flex-col  backdrop-blur-lg ">
-            {/* Header */}
             {!isMobile && (
                 <div
                     className={`flex  h-16  border-b border-t-gray/30 gap-3 items-center  ${!isCollapsed ? "px-6" : "justify-center"
@@ -171,7 +161,6 @@ export const AdminSidebarContent: React.FC<{
                 </div>
             )}
 
-            {/* Navigation */}
             <nav className="flex-1 space-y-1 p-4 ">
                 {SIDEBAR_ROUTES.map((route) => (
                     <AdminSidebarItem

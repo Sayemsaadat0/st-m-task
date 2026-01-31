@@ -9,21 +9,14 @@ export const dynamic = "force-dynamic"
 export const revalidate = 0
 export const fetchCache = "force-no-store"
 
-// ======================
-// GET /api/courses
-// - Get all courses with pagination, search, and faculty details
-// Query params: current_page, per_page, search
-// ======================
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     
-    // Parse query parameters
     const currentPage = parseInt(searchParams.get("current_page") || "1", 10)
     const perPage = parseInt(searchParams.get("per_page") || "10", 10)
     const searchQuery = searchParams.get("search") || ""
 
-    // Validate pagination parameters
     if (currentPage < 1) {
       return NextResponse.json(
         { success: false, message: "current_page must be greater than 0" },
@@ -38,7 +31,6 @@ export async function GET(request: Request) {
       )
     }
 
-    // Build search filter
     const filter: Record<string, unknown> = {}
     
     if (searchQuery.trim()) {
@@ -49,13 +41,10 @@ export async function GET(request: Request) {
       ]
     }
 
-    // Calculate pagination
     const skip = (currentPage - 1) * perPage
 
-    // Get total count (for pagination metadata)
     const count = await Course.countDocuments(filter)
 
-    // Fetch paginated courses with faculty_members and assignee details populated
     let courses
     try {
       courses = await Course.find(filter)
@@ -65,7 +54,6 @@ export async function GET(request: Request) {
         .skip(skip)
         .limit(perPage)
     } catch (populateError: any) {
-      // If assignee populate fails, just populate faculty_members
       if (populateError.message?.includes("assignee")) {
         courses = await Course.find(filter)
           .populate("faculty_members", "name faculty_id _id")
@@ -77,12 +65,10 @@ export async function GET(request: Request) {
       }
     }
     
-    // Populate faculty details and add status to assignees
     const coursesWithFaculty = await Promise.all(
       courses.map(async (course: any) => {
         const courseObj = course.toObject ? course.toObject() : course
         
-        // Add status to each assignee
         if (courseObj.assignee && Array.isArray(courseObj.assignee)) {
           courseObj.assignee = await Promise.all(
             courseObj.assignee.map(async (student: any) => {
@@ -91,7 +77,6 @@ export async function GET(request: Request) {
                   .select("grades")
                   .lean()
                 
-                // Check if student has a grade for this course
                 const hasGrade = studentDoc?.grades?.some((grade: any) => {
                   const gradeCourseId = typeof grade === "string"
                     ? grade
@@ -161,10 +146,6 @@ export async function GET(request: Request) {
   }
 }
 
-// ======================
-// POST /api/courses
-// - Create a new course
-// ======================
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -191,7 +172,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate all faculty member IDs
     const facultyMemberObjectIds: Types.ObjectId[] = []
     for (const memberId of faculty_members) {
       if (!memberId || typeof memberId !== "string") {
@@ -210,7 +190,6 @@ export async function POST(request: Request) {
       facultyMemberObjectIds.push(objectId)
     }
 
-    // Verify all faculty members exist
     const members = await FacultyMember.find({
       _id: { $in: facultyMemberObjectIds },
     })
@@ -230,14 +209,12 @@ export async function POST(request: Request) {
       assignee: [],
     })
 
-    // Populate faculty_members and assignee details in response
     let populatedCourse
     try {
       populatedCourse = await Course.findById(course._id)
         .populate("faculty_members", "name faculty_id _id")
         .populate("assignee", "first_name last_name email _id")
     } catch (populateError: any) {
-      // If assignee populate fails, just populate faculty_members
       if (populateError.message?.includes("assignee")) {
         populatedCourse = await Course.findById(course._id)
           .populate("faculty_members", "name faculty_id _id")
@@ -253,11 +230,9 @@ export async function POST(request: Request) {
       )
     }
     
-    // Populate faculty details and add status to assignees
     const { Student } = await import("@/models/student")
     const courseObj = populatedCourse.toObject ? populatedCourse.toObject() : populatedCourse
     
-    // Add status to each assignee
     if (courseObj.assignee && Array.isArray(courseObj.assignee)) {
       courseObj.assignee = await Promise.all(
         courseObj.assignee.map(async (student: any) => {
@@ -266,7 +241,6 @@ export async function POST(request: Request) {
               .select("grades")
               .lean()
             
-            // Check if student has a grade for this course
             const hasGrade = studentDoc?.grades?.some((grade: any) => {
               const gradeCourseId = typeof grade === "string"
                 ? grade

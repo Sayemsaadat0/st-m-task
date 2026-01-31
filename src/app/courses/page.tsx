@@ -19,7 +19,6 @@ export default function Courses() {
   const { data, isLoading } = useGetCourses(currentPage, perPage, search);
   const deleteCourse = useDeleteCourse();
 
-  // Prepare CSV data from table data
   const csvData = useMemo(() => {
     if (!data?.results) return [];
     return data.results.map((course: CourseType) => ({

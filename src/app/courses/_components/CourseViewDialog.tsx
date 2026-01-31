@@ -39,7 +39,6 @@ const CourseViewDialog: React.FC<CourseViewDialogProps> = ({ course }) => {
         <DialogDescription></DialogDescription>
         
         <div className="space-y-4 mt-2">
-          {/* Course Information */}
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-t-green border-b border-t-gray/30 pb-2">
               Course Information
@@ -85,7 +84,6 @@ const CourseViewDialog: React.FC<CourseViewDialogProps> = ({ course }) => {
             </div>
           </div>
 
-          {/* Faculty Members */}
           {facultyMembers.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-t-green border-b border-t-gray/30 pb-2">
@@ -106,7 +104,6 @@ const CourseViewDialog: React.FC<CourseViewDialogProps> = ({ course }) => {
             </div>
           )}
 
-          {/* Assigned Students */}
           {assignee.length > 0 ? (
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-t-green border-b border-t-gray/30 pb-2">

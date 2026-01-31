@@ -13,7 +13,6 @@ const resolveObjectId = (value: string) => {
   return new Types.ObjectId(value)
 }
 
-// Helper function to calculate progressSummary
 const calculateProgressSummary = async (courses: any[], grades: any[]) => {
   const completedCourses = grades.length
   const ongoingCourses = Math.max(0, courses.length - completedCourses)
@@ -46,10 +45,6 @@ const calculateProgressSummary = async (courses: any[], grades: any[]) => {
   }
 }
 
-// ======================
-// GET /api/courses/[id]/bulk-cgpa
-// - Get list of students assigned to the course
-// ======================
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -65,7 +60,6 @@ export async function GET(
       )
     }
 
-    // Find the course
     const course = await Course.findById(courseObjectId)
       .select("course_name course_code assignee _id")
       .lean()
@@ -97,7 +91,6 @@ export async function GET(
       }
     }
 
-    // Map students with status (passed/ongoing) based on grades
     const studentsWithStatus = students.map((student: any) => {
       const hasGrade = student.grades?.some((grade: any) => {
         const gradeCourseId = typeof grade === "string" 
@@ -140,11 +133,6 @@ export async function GET(
   }
 }
 
-// ======================
-// POST /api/courses/[id]/bulk-cgpa
-// - Add CGPA/grades for multiple students in a course
-// Body: { students: [{ student_id: string, cgpa: number }] }
-// ======================
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -170,7 +158,6 @@ export async function POST(
       )
     }
 
-    // Validate request body
     if (!studentsGrades || !Array.isArray(studentsGrades) || studentsGrades.length === 0) {
       return NextResponse.json(
         { success: false, message: "Students array is required and must not be empty" },
@@ -178,7 +165,6 @@ export async function POST(
       )
     }
 
-    // Validate each student grade entry
     const validatedEntries: Array<{ student_id: Types.ObjectId; cgpa: number }> = []
     for (const entry of studentsGrades) {
       if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
@@ -205,7 +191,6 @@ export async function POST(
         )
       }
 
-      // Verify student is assigned to this course
       if (!course.assignee || !Array.isArray(course.assignee)) {
         return NextResponse.json(
           { success: false, message: `Student ${student_id} is not assigned to this course` },
@@ -249,10 +234,8 @@ export async function POST(
         )
       }
 
-      // Get current grades array
       const currentGrades = Array.isArray(student.grades) ? [...student.grades] : []
 
-      // Remove existing grade for this course if it exists
       const filteredGrades = currentGrades.filter((grade: any) => {
         const gradeCourseId = typeof grade === "string"
           ? grade
@@ -260,21 +243,17 @@ export async function POST(
         return gradeCourseId && gradeCourseId.toString() !== courseObjectId.toString()
       })
 
-      // Add new grade entry for this course
       filteredGrades.push({
         course_id: courseObjectId,
         cgpa: entry.cgpa,
       })
 
-      // Update student's grades
       student.grades = filteredGrades
 
-      // Recalculate progressSummary
       const courses = Array.isArray(student.courses) ? student.courses : []
       const progressSummary = await calculateProgressSummary(courses, filteredGrades)
       student.progressSummary = progressSummary
 
-      // Optionally update overall CGPA (average of all course CGPA)
       if (filteredGrades.length > 0) {
         const totalCgpa = filteredGrades.reduce((sum: number, grade: any) => {
           const gradeValue = typeof grade === "object" && grade.cgpa ? grade.cgpa : 0

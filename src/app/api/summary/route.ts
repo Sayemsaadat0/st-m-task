@@ -9,18 +9,12 @@ export const dynamic = "force-dynamic"
 export const revalidate = 0
 export const fetchCache = "force-no-store"
 
-// ======================
-// GET /api/summary
-// - Get summary statistics
-// ======================
 export async function GET(request: Request) {
   try {
-    // Get all students
     const students = await Student.find({})
       .select("cgpa_point grades courses")
       .lean()
 
-    // Calculate passed and ongoing students
     let passedCount = 0
     let ongoingCount = 0
 
@@ -33,30 +27,25 @@ export async function GET(request: Request) {
       } else if (courses.length > 0) {
         ongoingCount++
       } else {
-        // Students with no courses are considered ongoing
         ongoingCount++
       }
     })
 
-    // Get total counts
     const totalStudents = await Student.countDocuments({})
     const totalCourses = await Course.countDocuments({})
     const totalFaculty = await Faculty.countDocuments({})
     const totalFacultyMembers = await FacultyMember.countDocuments({})
 
-    // Get top-ranking students (sorted by CGPA, descending)
     const topStudents = await Student.find({})
       .select("first_name last_name email cgpa_point _id")
       .sort({ cgpa_point: -1 })
       .limit(10)
       .lean()
 
-    // Get all courses with assignee count
     const courses = await Course.find({})
-      .select("course_name course_code assignee _id credits")
+      .select("course_name course_code assignee _id credits updatedAt createdAt")
       .lean()
 
-    // Calculate enrollment count for each course and sort
     const coursesWithEnrollment = courses.map((course: any) => ({
       _id: course._id,
       course_name: course.course_name,
@@ -65,10 +54,35 @@ export async function GET(request: Request) {
       enrollment_count: Array.isArray(course.assignee) ? course.assignee.length : 0,
     }))
 
-    // Sort by enrollment count (descending) and get top 10
     const mostPopularCourses = coursesWithEnrollment
       .sort((a, b) => b.enrollment_count - a.enrollment_count)
       .slice(0, 10)
+
+    const enrollmentOverTime: { [key: string]: number } = {}
+    
+    courses.forEach((course: any) => {
+      const assigneeCount = Array.isArray(course.assignee) ? course.assignee.length : 0
+      if (assigneeCount > 0 && course.createdAt) {
+        const date = new Date(course.createdAt)
+        const dayKey = date.toISOString().split('T')[0]
+        
+        if (!enrollmentOverTime[dayKey]) {
+          enrollmentOverTime[dayKey] = 0
+        }
+        enrollmentOverTime[dayKey] += assigneeCount
+      }
+    })
+
+    const enrollmentOverTimeArray = Object.entries(enrollmentOverTime)
+      .map(([date, count]) => ({
+        date,
+        enrollment_count: count,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    
+    const finalEnrollmentData = enrollmentOverTimeArray.length > 30 
+      ? enrollmentOverTimeArray.slice(-30)
+      : enrollmentOverTimeArray
 
     return NextResponse.json(
       {
@@ -93,6 +107,7 @@ export async function GET(request: Request) {
             cgpa_point: student.cgpa_point,
           })),
           most_popular_courses: mostPopularCourses,
+          enrollment_over_time: finalEnrollmentData,
         },
       },
       { status: 200 }

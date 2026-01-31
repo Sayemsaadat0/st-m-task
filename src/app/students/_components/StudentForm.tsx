@@ -302,7 +302,6 @@ const StudentForm: React.FC<StudentFormProps> = ({ instance = null, iconOnly = f
             max="4.0"
           />
 
-          {/* Attributes Section */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm text-white/60">

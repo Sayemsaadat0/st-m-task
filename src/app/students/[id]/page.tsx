@@ -79,7 +79,6 @@ export default function StudentProfile() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* Contact Information */}
         <div className="bg-t-black border border-t-gray/30 p-4">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Mail className="w-5 h-5 text-t-green" />
@@ -110,7 +109,6 @@ export default function StudentProfile() {
           </div>
         </div>
 
-        {/* Progress Summary */}
         <div className="bg-t-black border border-t-gray/30 p-4">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-t-green" />
@@ -139,7 +137,6 @@ export default function StudentProfile() {
         </div>
       </div>
 
-      {/* Courses */}
       {student.courses && student.courses.length > 0 ? (
         <div className="bg-t-black border border-t-gray/30 p-4 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -196,7 +193,6 @@ export default function StudentProfile() {
         </div>
       )}
 
-      {/* Grades */}
       {student.grades && student.grades.length > 0 && (
         <div className="bg-t-black border border-t-gray/30 p-4 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -205,17 +201,14 @@ export default function StudentProfile() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {student.grades.map((grade: any, index: number) => {
-              // Extract course ID from grade (can be string or object)
               const courseId = typeof grade === "string" 
                 ? grade 
                 : grade.course_id || grade.course || grade.courseId;
               
-              // Find the corresponding course
               const course = student.courses?.find((c: any) => 
                 c._id && c._id.toString() === courseId?.toString()
               );
 
-              // Get CGPA from grade object
               const gradeCgpa = typeof grade === "object" && grade.cgpa ? grade.cgpa : null;
 
               return (
@@ -251,7 +244,6 @@ export default function StudentProfile() {
         </div>
       )}
 
-      {/* Attributes */}
       {student.attributes && student.attributes.length > 0 && (
         <div className="bg-t-black border border-t-gray/30 p-4 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -280,7 +272,6 @@ export default function StudentProfile() {
         </div>
       )}
 
-      {/* Timestamps */}
       <div className="bg-t-black border border-t-gray/30 p-4">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-t-green" />

@@ -63,12 +63,6 @@ export const AdminMobileNavbar: React.FC<AdminMobileNavbarProps> = ({
   );
 };
 
-//Default component props
-// interface NavbarProps {
-//   isCollapsed: boolean;
-//   // onToggleCollapse: () => void
-// }
-
 interface AdminNavbarProps {
   isCollapsed: boolean;
 }
