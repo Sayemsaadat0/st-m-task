@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardTable, { type DashboardTableColumn } from "@/components/shared/DashboardTable";
 import { useGetFaculty, useDeleteFaculty, type FacultyType } from "../_components/hooks/faculty.hooks";
-import { SquareArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import DeleteAction from "@/components/shared/DeleteAction";
 import FacultyForm from "./_components/FacultyForm";
+import { Button } from "@/components/ui/button";
 
 export default function Faculty() {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [search, setSearch] = useState("");
@@ -32,6 +34,15 @@ export default function Faculty() {
       dataKey: "faculty_members_count",
       row: (data: FacultyType) => (
         <span className="text-xs sm:text-sm md:text-base">{data.faculty_members_count || (Array.isArray(data.faculty_members) ? data.faculty_members.length : 0)}</span>
+      ),
+    },
+    {
+      title: "Created At",
+      dataKey: "createdAt",
+      row: (data: FacultyType) => (
+        <span className="text-xs sm:text-sm md:text-base text-white/70">
+          {data.createdAt ? new Date(data.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "-"}
+        </span>
       ),
     },
     {
@@ -66,7 +77,23 @@ export default function Faculty() {
           </h1>
           <p className="text-xs sm:text-sm md:text-base text-white/70 mt-1 sm:mt-2">Manage your faculty</p>
         </div>
-        <FacultyForm instance={null} iconOnly={false} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/faculty/assign-course")}
+            className="text-t-gray"
+          >
+            Assign Course
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => router.push("/faculty/assign-grades")}
+            className="text-t-gray"
+          >
+            Assign Grades
+          </Button>
+          <FacultyForm instance={null} iconOnly={false} />
+        </div>
       </div>
 
       <div className="mb-2 flex flex-col sm:flex-row gap-2">

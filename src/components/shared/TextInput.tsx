@@ -30,7 +30,8 @@ const TextInput: React.FC<TextInputProps> = ({
         className={cn(
           inputVariants({ className }),
           type === 'number' && '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]',
-          error && 'border-orange-400'
+          error && 'border-orange-400',
+          props.disabled && 'opacity-50 cursor-not-allowed'
         )}
         placeholder={placeholder || ''}
         {...props}

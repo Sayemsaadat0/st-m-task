@@ -39,6 +39,15 @@ export default function FacultyMembers() {
       ),
     },
     {
+      title: "Created At",
+      dataKey: "createdAt",
+      row: (data: FacultyMemberType) => (
+        <span className="text-xs sm:text-sm md:text-base text-white/70">
+          {data.createdAt ? new Date(data.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "-"}
+        </span>
+      ),
+    },
+    {
       title: "Actions",
       dataKey: "actions",
       row: (data: FacultyMemberType) => (

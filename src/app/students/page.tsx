@@ -9,6 +9,7 @@ import { SquareArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import DeleteAction from "@/components/shared/DeleteAction";
 import StudentForm from "./_components/StudentForm";
+import StudentCoursesDialog from "./_components/StudentCoursesDialog";
 
 export default function Students() {
   const router = useRouter();
@@ -59,6 +60,20 @@ export default function Students() {
       ),
     },
     {
+      title: "Courses",
+      dataKey: "courses",
+      row: (data: StudentType) => (
+        <div className="flex items-center gap-2">
+          <span className="text-xs sm:text-sm md:text-base text-t-green font-semibold">
+            {Array.isArray(data.courses) ? data.courses.length : 0}
+          </span>
+          {Array.isArray(data.courses) && data.courses.length > 0 && (
+            <StudentCoursesDialog student={data} />
+          )}
+        </div>
+      ),
+    },
+    {
       title: "CGPA",
       dataKey: "cgpa_point",
       row: (data: StudentType) => (
@@ -71,6 +86,15 @@ export default function Students() {
       row: (data: StudentType) => (
         <span className={`text-xs sm:text-sm md:text-base uppercase ${data.status === "passed" ? "text-t-green" : "text-orange-400"}`}>
           {data.status || "ongoing"}
+        </span>
+      ),
+    },
+    {
+      title: "Created At",
+      dataKey: "createdAt",
+      row: (data: StudentType) => (
+        <span className="text-xs sm:text-sm md:text-base text-white/70">
+          {data.createdAt ? new Date(data.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "-"}
         </span>
       ),
     },

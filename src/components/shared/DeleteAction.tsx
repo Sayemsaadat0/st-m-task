@@ -44,14 +44,14 @@ const DeleteAction: React.FC<DeleteActionProps> = ({
       >
         <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-400" />
       </div>
-      <AlertDialogContent className="bg-t-black border border-t-gray/30 text-white max-w-xs p-4 sm:p-5 md:p-6">
+      <AlertDialogContent className="bg-t-black border border-t-gray/30 text-white max-w-[180px] p-3 sm:p-4">
         <AlertDialogTitle className="sr-only">
           Delete Confirmation
         </AlertDialogTitle>
         <AlertDialogDescription></AlertDialogDescription>
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="bg-red-500/10 p-2 sm:p-3 rounded-full">
+            <div className="bg-red-500/10 p-2 sm:p-3">
               <Trash2 className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-red-500" />
             </div>
           </div>

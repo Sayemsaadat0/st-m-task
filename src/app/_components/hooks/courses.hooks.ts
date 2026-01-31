@@ -126,3 +126,83 @@ export const useDeleteCourse = () => {
         },
     });
 };
+
+export const useAssignStudentsToCourse = (courseId: string) => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: (assignee: string[]) =>
+            axiousResuest({
+                url: `api/courses/${courseId}/assignee`,
+                method: "post",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: { assignee },
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["courses"] });
+            queryClient.invalidateQueries({ queryKey: ["course", courseId] });
+            queryClient.invalidateQueries({ queryKey: ["students"] });
+        },
+    });
+};
+
+export interface BulkCgpaStudent {
+    _id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    cgpa_point: number;
+    status?: string;
+}
+
+export interface BulkCgpaResponse {
+    success: boolean;
+    message: string;
+    result: {
+        course: {
+            _id: string;
+            course_name: string;
+            course_code?: string;
+        };
+        students: BulkCgpaStudent[];
+    };
+}
+
+export const useGetBulkCgpaStudents = (courseId: string) => {
+    return useQuery<BulkCgpaResponse>({
+        queryKey: ["bulk-cgpa", courseId],
+        queryFn: () =>
+            axiousResuest({
+                url: `api/courses/${courseId}/bulk-cgpa`,
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }),
+        enabled: !!courseId,
+    });
+};
+
+export const useBulkAssignCgpa = (courseId: string) => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: (students: Array<{ student_id: string; cgpa: number }>) =>
+            axiousResuest({
+                url: `api/courses/${courseId}/bulk-cgpa`,
+                method: "post",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: { students },
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["bulk-cgpa", courseId] });
+            queryClient.invalidateQueries({ queryKey: ["courses"] });
+            queryClient.invalidateQueries({ queryKey: ["course", courseId] });
+            queryClient.invalidateQueries({ queryKey: ["students"] });
+        },
+    });
+};

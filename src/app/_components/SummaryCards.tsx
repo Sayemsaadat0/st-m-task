@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Users, BookOpen, GraduationCap, UserCheck } from "lucide-react";
+import { Users, BookOpen, GraduationCap, UserCheck, Building2, UserCog } from "lucide-react";
 
 interface SummaryCardsProps {
     totals: {
@@ -33,6 +33,20 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ totals, student_status }) =
             bgColor: "bg-purple-400/20",
         },
         {
+            title: "Total Faculty",
+            value: totals.faculty,
+            icon: Building2,
+            color: "text-cyan-400",
+            bgColor: "bg-cyan-400/20",
+        },
+        {
+            title: "Faculty Members",
+            value: totals.faculty_members,
+            icon: UserCog,
+            color: "text-indigo-400",
+            bgColor: "bg-indigo-400/20",
+        },
+        {
             title: "Passed Students",
             value: student_status.passed,
             icon: GraduationCap,
@@ -49,7 +63,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ totals, student_status }) =
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {cards.map((card, index) => {
                 const Icon = card.icon;
                 return (

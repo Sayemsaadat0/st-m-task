@@ -6,6 +6,7 @@ import { useGetStudent } from "../../_components/hooks/students.hooks";
 import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, Award, Calendar, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StudentForm from "../_components/StudentForm";
+import Image from "next/image";
 
 export default function StudentProfile() {
   const params = useParams();
@@ -15,11 +16,17 @@ export default function StudentProfile() {
 
   if (isLoading) {
     return (
-      <div className="p-3 sm:p-4 md:p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-white/70">Loading...</div>
-        </div>
-      </div>
+      <div className="flex items-center justify-center h-screen">
+      <Image
+        className="w-auto h-12 animate-pulse"
+        src="/assets/logo22.png"
+        alt="logo"
+        width={600}
+        height={600}
+        priority
+        unoptimized
+      />
+    </div>
     );
   }
 

@@ -69,7 +69,11 @@ export const AdminMobileNavbar: React.FC<AdminMobileNavbarProps> = ({
 //   // onToggleCollapse: () => void
 // }
 
-export const AdminNavbar = () => {
+interface AdminNavbarProps {
+  isCollapsed: boolean;
+}
+
+export const AdminNavbar: React.FC<AdminNavbarProps> = ({ isCollapsed }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -79,14 +83,28 @@ export const AdminNavbar = () => {
           <div className="md:hidden">
             <AdminMobileNavbar open={open} setOpen={setOpen} />
           </div>
-          <Link href="/" className="cursor-pointer flex items-center gap-3">
+          {!isCollapsed && (
+            <p className="text-sm text-t-gray font-medium">
+              Welcome back, Admin
+            </p>
+          )}
+          {isCollapsed && (
             <div>
-              <LogoImage />
+              <Link href="/" className="cursor-pointer flex items-center gap-3">
+                <div>
+                  <LogoImage />
+                </div>
+
+              </Link>
+              <p className="text-sm hidden lg:block text-t-gray font-medium">
+                Welcome back, Admin
+              </p>
+
             </div>
-          </Link>
+          )}
         </div>
 
-        <div className="flex items-center pr-8 text-right gap-3 bg-t-black/70 px-4 py-1.5   shadow">
+        <div className="flex items-center pr-8 text-right gap-3 bg-t-black/70 px-4 py-1.5   ">
           <div className="flex flex-col">
             <span className="text-sm font-medium text-white leading-tight">
               demo@example.com

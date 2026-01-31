@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 // import { sidebarRoutes, type SidebarRoute } from "@/dummy/constant.data";
@@ -19,9 +18,10 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Image from "next/image";
+import Link from "next/link";
 // import { useAuthStore } from "@/store/authStore";
 // import { LogoIcon } from "./icons/icons"
-// import Image from "next/image"
 
 interface SidebarProps {
     isCollapsed: boolean;
@@ -155,7 +155,19 @@ export const AdminSidebarContent: React.FC<{
                     >
                         <MenuIcon size={24} className="w-full  text-t-green " />
                     </div>
-                    {!isCollapsed && <p className="text-white/80 ">Welcome</p>}
+                    {!isCollapsed && (
+                        <Link href="/" className="cursor-pointer flex items-center">
+                            <Image
+                                className="w-auto h-8"
+                                src="/assets/logo22.png"
+                                alt="logo"
+                                width={600}
+                                height={600}
+                                priority
+                                unoptimized
+                            />
+                        </Link>
+                    )}
                 </div>
             )}
 

@@ -97,6 +97,25 @@ export async function GET(
       }
     }
 
+    // Map students with status (passed/ongoing) based on grades
+    const studentsWithStatus = students.map((student: any) => {
+      const hasGrade = student.grades?.some((grade: any) => {
+        const gradeCourseId = typeof grade === "string" 
+          ? grade 
+          : grade.course_id || grade.course || grade.courseId
+        return gradeCourseId && gradeCourseId.toString() === course._id.toString()
+      }) || false
+
+      return {
+        _id: student._id,
+        first_name: student.first_name,
+        last_name: student.last_name,
+        email: student.email,
+        cgpa_point: student.cgpa_point,
+        status: hasGrade ? "passed" : "ongoing",
+      }
+    })
+
     return NextResponse.json(
       {
         success: true,
@@ -107,19 +126,7 @@ export async function GET(
             course_name: course.course_name,
             course_code: course.course_code,
           },
-          students: students.map((student: any) => ({
-            _id: student._id,
-            first_name: student.first_name,
-            last_name: student.last_name,
-            email: student.email,
-            cgpa_point: student.cgpa_point,
-            has_grade: student.grades?.some((grade: any) => {
-              const gradeCourseId = typeof grade === "string" 
-                ? grade 
-                : grade.course_id || grade.course || grade.courseId
-              return gradeCourseId && gradeCourseId.toString() === course._id.toString()
-            }) || false,
-          })),
+          students: studentsWithStatus,
         },
       },
       { status: 200 }

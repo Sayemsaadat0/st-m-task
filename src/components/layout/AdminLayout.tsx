@@ -38,7 +38,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           {/* Main Content Area */}
           <div className="flex flex-1 flex-col overflow-hidden">
             {/* Navbar */}
-            <AdminNavbar />
+            <AdminNavbar isCollapsed={isCollapsed} />
 
             {/* Page Content */}
             <main className={cn(

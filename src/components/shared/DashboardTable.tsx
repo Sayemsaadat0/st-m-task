@@ -20,7 +20,7 @@ const DashboardTable: FC<DashboardTableProps> = ({ columns, data, isLoading }) =
           <thead className="sticky z-10 top-0 w-full h-fit bg-t-green">
             <tr className=''>
               {columns.map((column, index) => (
-                <th key={index} scope="col" className="text-xs sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 last:text-right">
+                <th key={index} scope="col" className="text-xs border-r border-t-gray/30 sm:text-sm md:text-base px-2 sm:px-3 py-2 sm:py-3 last:text-right">
                   {column.title}
                 </th>
               ))}
